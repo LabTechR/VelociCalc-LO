@@ -57,4 +57,17 @@ function connection(){ $('#connection').textContent=navigator.onLine?'En línea'
 window.addEventListener('online',connection);window.addEventListener('offline',connection);connection();
 let installPrompt;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;$('#install').hidden=false;});$('#install').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;$('#install').hidden=true;}};
 window.addEventListener('appinstalled',()=>{$('#install').hidden=true;});
-if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').then(()=>navigator.serviceWorker.ready).then(()=>{$('#offline-status').textContent='Disponible sin conexión en este dispositivo';}).catch(()=>{$('#offline-status').textContent='Sin conexión no disponible: recarga con HTTPS o localhost.';});}else $('#offline-status').textContent='Este navegador no admite uso sin conexión.';
+if('serviceWorker' in navigator){
+ const updateButton=document.createElement('button');updateButton.type='button';updateButton.textContent='Actualizar aplicación';$('.header-actions').append(updateButton);
+ let registration;
+ updateButton.onclick=async()=>{
+  if(!navigator.onLine){$('#offline-status').textContent='Conéctate a Internet para buscar actualizaciones.';return;}
+  updateButton.disabled=true;
+  try{registration=registration||await navigator.serviceWorker.ready;await registration.update();window.location.reload();}
+  catch{$('#offline-status').textContent='No se pudo actualizar. Inténtalo de nuevo con conexión.';updateButton.disabled=false;}
+ };
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+  $('#offline-status').textContent='Nueva versión disponible. Pulsa Actualizar aplicación para cargarla.';
+ });
+ navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(r=>{registration=r;return navigator.serviceWorker.ready;}).then(()=>{$('#offline-status').textContent='Versión 1.0.5 · Disponible sin conexión en este dispositivo';}).catch(()=>{$('#offline-status').textContent='Sin conexión no disponible: recarga con HTTPS o localhost.';});
+}else $('#offline-status').textContent='Este navegador no admite uso sin conexión.';

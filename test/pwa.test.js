@@ -11,7 +11,7 @@ test('manifest e iconos instalables presentes',async()=>{
 test('todos los recursos precacheados existen',async()=>{
  const sw=await readFile('public/sw.js','utf8');
  const assets=sw.match(/const ASSETS=\[(.*?)\]/s)[1].matchAll(/'([^']+)'/g);
- for(const [,file] of assets)await access('dist/'+(file==='./'?'index.html':file));
+ for(const [,file] of assets)await access('dist/'+(file==='./'?'index.html':file.split('?')[0]));
 });
 test('el paquete publicado arranca la interfaz y calcula sin módulos remotos',async()=>{
  const {runInNewContext}=await import('node:vm');
@@ -20,7 +20,7 @@ test('el paquete publicado arranca la interfaz y calcula sin módulos remotos',a
  const document={querySelector(s){if(!elements.has(s))elements.set(s,element());return elements.get(s);},querySelectorAll(s){return s==='#models button'?document.querySelector('#models').children:[];},createElement:element};
  const bundle=await readFile('dist/app.bundle.js','utf8');
  const html=await readFile('dist/index.html','utf8');
- assert.match(html,/<script defer src="\.\/app.bundle.js"><\/script>/);
+ assert.match(html,/<script defer src="\.\/app.bundle.js\?v=5"><\/script>/);
  runInNewContext(bundle,{document,window:{addEventListener(){}},navigator:{onLine:true}});
  assert.equal(document.querySelector('#models').children.length,6);
  assert.equal(document.querySelector('#model-title').textContent,'Frenado recto');

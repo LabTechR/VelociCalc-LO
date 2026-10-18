@@ -38,7 +38,7 @@ Servir mediante HTTPS (o localhost). En la primera visita con conexión se preca
 
 En navegadores compatibles aparece «Instalar aplicación»; también puede utilizarse la opción de instalación del navegador o «Añadir a pantalla de inicio» en Safari. La disponibilidad depende del navegador. Los iconos PNG incluyen 192 y 512 píxeles, este último con contenido dentro del área segura maskable.
 
-Para actualizar, incrementar el nombre `CACHE` de `public/sw.js` al modificar los recursos precargados. El nuevo worker espera el cierre de las pestañas anteriores antes de activarse, evitando mezclar versiones. Las cachés de esta aplicación se retiran al activar la nueva versión.
+Para actualizar, incrementar el nombre `CACHE` de `public/sw.js` y la versión del bundle en el build al modificar recursos. El nuevo worker se activa al terminar la precarga. La navegación busca HTML actualizado con conexión y recurre a la caché sin red. El bundle lleva una versión en su URL para evitar reutilizar JavaScript anterior. El botón «Actualizar aplicación» busca actualizaciones y recarga; la recarga descarta los datos introducidos. Las cachés anteriores de esta aplicación se retiran al activar la nueva versión.
 
 ## Publicación independiente en Render
 

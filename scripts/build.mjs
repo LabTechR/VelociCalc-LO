@@ -6,5 +6,5 @@ const formulas=(await readFile('public/formulas.js','utf8')).replace(/^export /g
 const app=(await readFile('public/app.js','utf8')).replace(/^import .*?;\r?\n/gm,'');
 await writeFile('dist/app.bundle.js',`(()=>{\n${physics}\n${formulas}\n${app}\n})();\n`);
 const html=await readFile('public/index.html','utf8');
-await writeFile('dist/index.html',html.replace('<script type="module" src="./app.js"></script>','<script defer src="./app.bundle.js"></script>'));
+await writeFile('dist/index.html',html.replace('<script type="module" src="./app.js"></script>','<script defer src="./app.bundle.js?v=5"></script>'));
 console.log('Sitio estático generado en dist/');
