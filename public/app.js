@@ -1,4 +1,5 @@
 import {surfaces, braking, yaw, segments} from './physics.js';
+import {longitudinalFormula} from './formulas.js';
 const models = [
  ['Frenado recto','Balance de energía en una trayectoria longitudinal.'],
  ['Frenado con ABS','Estimación con fricción efectiva de frenado validada.'],
@@ -48,7 +49,7 @@ $('#calculator').addEventListener('submit',e=>{e.preventDefault();resetResult();
  let result='';
  if(mode===2||mode===3) result=card('Velocidad crítica ideal · yaw',yaw({radius:get('radius'),mu:get('lateralMu')}),'v = √(gRμₗ). Horizontal, sin peralte y sin frenado simultáneo.');
  if(mode===5) result=card('Velocidad al inicio de los tramos',segments($$('.segment').map(r=>data(r.dataset.prefix)),get('finalSpeed')),'vᵢ = √(v𝒇² + 2g Σ(dᵢ fₑᵢ)). Se combinan trabajos, no velocidades.');
- else if(mode!==2) result=card(mode===4?'Velocidad equivalente disipada':'Velocidad al inicio del frenado',braking(data('')),mode===4?'vₑ = √(2gd fₑ). Energía del recorrido; no velocidad preimpacto.':'vᵢ = √(v𝒇² + 2gd fₑ). Solo el recorrido y los supuestos introducidos.')+result;
+ else if(mode!==2) result=card(mode===4?'Velocidad equivalente disipada':'Velocidad al inicio del frenado',braking(data('')),longitudinalFormula(get('slope'),mode===4)+(mode===4?' Energía del recorrido; no velocidad preimpacto.':' Solo el recorrido y los supuestos introducidos.'))+result;
  $('#result').innerHTML='<p class="eyebrow">ESTIMACIÓN CON LOS DATOS INTRODUCIDOS</p>'+result+'<p>Resultado condicionado al modelo. No incluye incertidumbre ni valida la evidencia.</p>';
  }catch(err){$('#error').textContent=err.message;}});
 render();
